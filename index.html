@@ -128,28 +128,16 @@
       </p>
     </section>
 
-    <!-- Galerie Vidéos -->
+    <!-- Galerie Photos -->
     <section class="section" id="gallery">
       <h2 class="section-title">Galerie Souvenirs</h2>
       <p class="section-text">
-        Retrouvez ici quelques souvenirs précieux en vidéo.
+        Retrouvez ici quelques souvenirs précieux en images.
       </p>
       <div class="gallery-grid">
-        <video class="gallery-video" autoplay muted loop playsinline controls preload="auto">
-          <source src="a.mov" type="video/quicktime">
-          <source src="a.mp4" type="video/mp4">
-          Votre navigateur ne prend pas en charge la lecture de la vidéo.
-        </video>
-        <video class="gallery-video" autoplay muted loop playsinline controls preload="auto">
-          <source src="b.mov" type="video/quicktime">
-          <source src="b.mp4" type="video/mp4">
-          Votre navigateur ne prend pas en charge la lecture de la vidéo.
-        </video>
-        <video class="gallery-video" autoplay muted loop playsinline controls preload="auto">
-          <source src="c.mov" type="video/quicktime">
-          <source src="c.mp4" type="video/mp4">
-          Votre navigateur ne prend pas en charge la lecture de la vidéo.
-        </video>
+        <img src="a.png" alt="Souvenir Nada 1" class="gallery-img">
+        <img src="b.png" alt="Souvenir Nada 2" class="gallery-img">
+        <img src="c.png" alt="Souvenir Nada 3" class="gallery-img">
       </div>
     </section>
 
@@ -229,19 +217,12 @@
     const openBtn = document.getElementById('openBtn');
     const welcomeScreen = document.getElementById('welcomeScreen');
     const music = document.getElementById('bgMusic');
-    const videos = document.querySelectorAll('.gallery-video');
 
     openBtn.addEventListener('click', () => {
       welcomeScreen.classList.add('hidden');
       
       music.play().catch(() => {
         console.log('Lecture audio bloquée');
-      });
-
-      videos.forEach(video => {
-        video.play().catch(err => {
-          console.log('Lecture vidéo bloquée :', err);
-        });
       });
     });
 
