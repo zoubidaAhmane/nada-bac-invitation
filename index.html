@@ -182,7 +182,7 @@
     </p>
   </footer>
 
-  <!-- Scripts JavaScript (Interface & Animations) -->
+  <!-- Scripts JavaScript (Interface, Animations & Auto-Scroll) -->
   <script>
     // Fonction réutilisable pour générer des pétales
     function createPetals(container, count) {
@@ -213,7 +213,7 @@
     // 2. Pétales pour l'intérieur du site
     createPetals(document.getElementById('mainPetalsContainer'), 20);
 
-    // 3. Événement au clic du bouton "Ouvrir"
+    // 3. Événement au clic du bouton "Ouvrir" + Déclenchement de l'Auto-Scroll
     const openBtn = document.getElementById('openBtn');
     const welcomeScreen = document.getElementById('welcomeScreen');
     const music = document.getElementById('bgMusic');
@@ -224,6 +224,11 @@
       music.play().catch(() => {
         console.log('Lecture audio bloquée');
       });
+
+      // Démarre le défilement automatique après une légère pause (1.5s)
+      setTimeout(() => {
+        requestAnimationFrame(autoScrollStep);
+      }, 1500);
     });
 
     // 4. Animation Scroll Reveal
@@ -240,6 +245,44 @@
 
     sections.forEach(section => {
       sectionObserver.observe(section);
+    });
+
+    // 5. Logiciel d'Auto-Défilement Continu (Auto-Scroll)
+    let isAutoScrolling = true;
+    let scrollSpeed = 4; // Ajuster la vitesse : 0.5 = plus lent, 2 = plus rapide
+    let userInteractionTimeout;
+
+    function autoScrollStep() {
+      if (isAutoScrolling) {
+        window.scrollBy({ top: scrollSpeed, behavior: 'smooth' });
+
+        // Arrêt automatique si le bas de page est atteint
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+          isAutoScrolling = false;
+          return;
+        }
+      }
+      requestAnimationFrame(autoScrollStep);
+    }
+
+    // Pause temporaire si l'utilisateur interagit manuellement
+    function pauseAutoScroll() {
+      isAutoScrolling = false;
+      clearTimeout(userInteractionTimeout);
+      
+      // Reprise automatique après 3 secondes d'inactivité
+      userInteractionTimeout = setTimeout(() => {
+        isAutoScrolling = true;
+      }, 3000);
+    }
+
+    // Écouteurs de gestes utilisateurs
+    window.addEventListener('wheel', pauseAutoScroll, { passive: true });
+    window.addEventListener('touchmove', pauseAutoScroll, { passive: true });
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowUp', 'ArrowDown', 'Space', 'PageUp', 'PageDown'].includes(e.code)) {
+        pauseAutoScroll();
+      }
     });
   </script>
 
