@@ -5,20 +5,6 @@
   <title>Célébration du Baccalauréat – Ahmane Nada El Firdaous</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Méta-balises Open Graph pour l'aperçu Facebook & Messenger -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://zoubidaahmane.github.io/nada-bac-invitation/">
-  <meta property="og:title" content="Célébration du Baccalauréat – Nada 🎓">
-  <meta property="og:description" content="Rejoignez-nous le 3 Août 2026 à Batna pour célébrer le succès académique d'Ahmane Nada El Firdaous !">
-  <meta property="og:image" content="https://zoubidaahmane.github.io/nada-bac-invitation/intro.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/zoubidaAhmane/nada-bac-invitation/main/intro.png">
-  <meta property="og:image:secure_url" content="https://raw.githubusercontent.com/zoubidaAhmane/nada-bac-invitation/main/intro.png">
-  <meta name="twitter:image" content="https://raw.githubusercontent.com/zoubidaAhmane/nada-bac-invitation/main/intro.png">
-  
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-
   <!-- Polices Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 
@@ -239,10 +225,11 @@
         console.log('Lecture audio bloquée');
       });
 
-      // Démarre le défilement automatique après une légère pause (1.5s)
+      // Démarre le défilement automatique après 1 seconde
       setTimeout(() => {
+        isAutoScrolling = true;
         requestAnimationFrame(autoScrollStep);
-      }, 1500);
+      }, 1000);
     });
 
     // 4. Animation Scroll Reveal
@@ -261,37 +248,45 @@
       sectionObserver.observe(section);
     });
 
-    // 5. Logiciel d'Auto-Défilement Continu (Auto-Scroll)
-    let isAutoScrolling = true;
-    let scrollSpeed = 12; // Ajuster la vitesse : 0.5 = plus lent, 2 = plus rapide
+    // 5. Logiciel d'Auto-Défilement Compatible iOS Safari (Auto-Scroll Fix)
+    let isAutoScrolling = false;
+    let scrollSpeed = 1.2; // Vitesse optimale pour la fluidité iOS
     let userInteractionTimeout;
 
     function autoScrollStep() {
       if (isAutoScrolling) {
-        window.scrollBy({ top: scrollSpeed, behavior: 'smooth' });
+        // Pixel step scroll compatible iOS Safari (au lieu de behavior: smooth)
+        window.scrollBy(0, scrollSpeed);
 
-        // Arrêt automatique si le bas de page est atteint
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+        // Arrêt automatique si le bas de la page est atteint
+        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+
+        if (currentScroll >= maxScroll - 2) {
           isAutoScrolling = false;
           return;
         }
+
+        requestAnimationFrame(autoScrollStep);
       }
-      requestAnimationFrame(autoScrollStep);
     }
 
-    // Pause temporaire si l'utilisateur interagit manuellement
+    // Pause temporaire si l'utilisateur touche l'écran ou défile
     function pauseAutoScroll() {
+      if (!isAutoScrolling) return;
       isAutoScrolling = false;
       clearTimeout(userInteractionTimeout);
       
       // Reprise automatique après 3 secondes d'inactivité
       userInteractionTimeout = setTimeout(() => {
         isAutoScrolling = true;
+        requestAnimationFrame(autoScrollStep);
       }, 3000);
     }
 
-    // Écouteurs de gestes utilisateurs
+    // Écouteurs d'événements iOS/Android
     window.addEventListener('wheel', pauseAutoScroll, { passive: true });
+    window.addEventListener('touchstart', pauseAutoScroll, { passive: true });
     window.addEventListener('touchmove', pauseAutoScroll, { passive: true });
     window.addEventListener('keydown', (e) => {
       if (['ArrowUp', 'ArrowDown', 'Space', 'PageUp', 'PageDown'].includes(e.code)) {
